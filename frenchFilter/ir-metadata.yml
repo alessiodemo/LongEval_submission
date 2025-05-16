@@ -42,9 +42,11 @@ method:
   automatic: true
 
   indexing:
-    tokenizer: Whitespace
-    stemmer: FrenchLight
-    stopwords: French Oracle stopword, English stopword, custom stopword
+    Tokenizer: Whitespace
+    Filters: LowerCase, Length
+    Stoplist: Oracle French Stoplist
+    Stemmer: FrenchLight
+    Searcher parameters: Minimum query-document match threshold restored to 2 terms
 
   retrieval:
     - # Which ranking approach do you use? E.g., bm25
