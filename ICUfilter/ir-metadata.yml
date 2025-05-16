@@ -1,0 +1,140 @@
+ir_metadata.start
+schema-version: 0.1
+run-version: 1.0
+tag: bm25+rm3
+
+platform:
+  hardware:
+    cpu:
+      model: Intel(R) Xeon(R) Gold 6144 CPU @ 3.50GHz
+      architecture: x86_64
+      operation mode: 64-bit
+      number of cores: 16
+    gpu:
+      model: NVIDIA RTX A6000
+      memory: 48 GB
+      number of cores: 10752
+    ram: 32 GB
+  operating system:
+    kernel: GNU/Linux 4.15.0-166-generic
+    distribution: Ubuntu 18.04.5 LTS
+  software:
+    libraries:
+      python:
+      - blas==1.0
+      - libgfortran==3.0.1
+      - libxml2==2.9.8
+      - lightgbm==2.2.1
+      - ncurses==6.1
+      - numpy==1.15.4
+      - numpy-base==1.15.4
+      - scikit-learn==0.20.1
+      - scipy==1.1.0
+      - setuptools==40.6.2
+      java:
+      - lucene==7.6
+    retrieval toolkit:
+    - anserini==0.3.0
+
+research goal:
+  venue:
+    name: ECIR
+    year: 2019
+  publication:
+    dblp: https://dblp.org/rec/conf/ecir/YuXL19
+    doi: https://doi.org/10.1007/978-3-030-15712-8_26
+    url: https://cs.uwaterloo.ca/~jimmylin/publications/Yu_etal_ECIR2019.pdf
+    abstract: We tackle the problem of transferring relevance judgments across document collections for specific information needs by reproducing and generalizing the work of Grossman and Cormack from the TREC 2017 Common Core Track. Their approach involves training relevance classifiers using human judgments on one or more existing (source) document collections and then applying those classifiers to a new (target) document collection. Evaluation results show that their approach, based on logistic regression using word-level tf-idf features, is both simple and effective, with average precision scores close to human-in-the-loop runs. The original approach required inference on every document in the target collection, which we reformulated into a more efficient reranking architecture using widely-available open-source tools. Our efforts to reproduce the TREC results were successful, and additional experiments demonstrate that relevance judgments can be effectively transferred across collections in different combinations. We affirm that this approach to cross-collection relevance feedback is simple, robust, and effective.
+  evaluation:
+    reported measures:
+    - map
+    - P_10
+    baseline:
+    - WCrobust04
+    significance test:
+      - name: t-test
+        correction method: bonferroni
+
+implementation:
+  executable:
+    cmd: python src/main/python/ecir2019_ccrf/generate_runs.py --config src/main/python/ecir2019_ccrf/configs/ccrf.04_core17_BM25+AX.json
+  source:
+    lang:
+    - Java
+    - Python
+    - Shell
+    repository: https://github.com/castorini/anserini
+    commit: 9548cd6
+
+method:
+  automatic: true
+  indexing:
+    tokenizer: org.apache.lucene.analysis.en.StandardTokenizer
+    stemmer: org.apache.lucene.analysis.en.PorterStemFilter
+    stopwords: org.apache.lucene.analysis.standard.StandardAnalyzer.STOP_WORDS_SET
+  retrieval:
+  - name: bm25
+    method: org.apache.lucene.search.similarities.Similarity.BM25Similarity
+    b: 0.4
+    k1: 0.9
+  - name: axiomatic reranker
+    method: io.anserini.rerank.lib.AxiomReranker
+    rerankCutoff: 20
+    axiom.deterministic: true
+    reranks: bm25
+  - name: lr reranker
+    method: sklearn.linear_model.LogisticRegression
+    reranks: axiomatic reranker
+  - name: svm reranker
+    method: sklearn.svm.SVC
+    reranks: axiomatic reranker
+  - name: lgb reranker
+    method: lightgbm
+    reranks: axiomatic reranker
+  - name: ensemble
+    ensembles:
+    - lr reranker
+    - svm reranker
+    - lgb reranker
+  - name: interpolation
+    weight: 0.6
+    interpolates:
+    - axiomatic reranker
+    - ensemble
+
+actor:
+  name: Jimmy Lin
+  orcid: 0000-0002-0661-7189
+  team: h2oloo
+  fields:
+  - nlp
+  - ir
+  - databases
+  - large-scale distributed algorithms
+  - data analytics
+  mail: jimmylin@uwaterloo.ca
+  role: reproducer
+  degree: Ph.D.
+  github: https://github.com/lintool
+  twitter: https://twitter.com/lintool
+
+data:
+  test collection:
+    name: The New York Times Annotated Corpus
+    source: https://catalog.ldc.upenn.edu/LDC2008T19
+    qrels: https://trec.nist.gov/data/core/qrels.txt
+    topics: https://trec.nist.gov/data/core/core_nist.txt
+    ir_datasets: https://ir-datasets.com/nyt
+  training data:
+  - name: TREC disks 4 and 5
+    source: https://trec.nist.gov/data/cd45/index.html
+    qrels: https://trec.nist.gov/data/robust/qrels.robust2004.txt
+    topics: https://trec.nist.gov/data/robust/04.testset.gz
+    ir_datasets: https://ir-datasets.com/trec-robust04
+  other:
+  - name: GloVe embeddings
+    source: https://nlp.stanford.edu/projects/glove/
+  - name: Indri's stopword list
+    source: https://sourceforge.net/projects/lemur/
+
+ir_metadata.end
