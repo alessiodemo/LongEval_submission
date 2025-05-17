@@ -1,0 +1,72 @@
+tag: seupd2425-rand-DL-run
+
+actor:
+  team: rand
+
+research goal:
+  description: |
+    
+    The base pipeline is composed of three main phases: parsing, indexing and searching. For the parsing,
+    the system can accept JSON or TREC files as input, from which it will clean the text by removing
+    unwanted elements like HTML tags, links and special characters. The indexing phase is responsible for
+    converting a collection of text documents into a searchable format using a text indexing framework. The
+    system allows customization of how text is tokenized and compared. The searcher phase is responsible
+    for executing search operations over the index using a set of predefined queries. It can apply advanced
+    text processing techniques, including tokenization and synonym-based query expansion. The system
+    supports configurable parameters and can integrate additional semantic tools to enhance relevance.
+    The final ranked documents are put into a standardized output suitable for evaluation.
+
+
+platform:
+  software:
+    libraries:
+      - com.fasterxml.jackson.dataformat.xml.XmlMapper
+      - org.apache.lucene.search.similarities.BM25Similarity
+      - org.apache.lucene.search.similarities.Similarity
+      - org.apache.lucene.benchmark.quality.QualityQuery
+      - java.io.File
+      - java.nio.file.Paths
+      - java.util.List
+      - java.util.Comparator
+      - uk.ac.gla.terrier.jtreceval.trec_eval
+
+implementation:
+  source:
+    repository: https://bitbucket.org/upd-dei-stud-prj/seupd2425-rand/src/master/
+
+data:
+  training data:
+    - name: longeval-sci
+
+method:
+  automatic: true
+
+  indexing:
+    Tokenizer: Whitespace
+    Filters: LowerCase, Length
+    Stoplist: Oracle French Stoplist
+    Stemmer: FrenchLight
+    Searcher parameters: Deep Learning reRanker (DL)
+
+  retrieval:
+    - # Which ranking approach do you use? E.g., bm25
+      name: bm25
+
+      ##################################################
+      # Yes/No Questions
+      ##################################################
+
+      # Did you use any statistical ranking model? (yes/no)
+      lexical: yes
+
+      # Did you use any deep neural network model? (yes/no)
+      deep_neural_model: yes
+
+      # Did you use a sparse neural model? (yes/no):
+      sparse_neural_model: no
+
+      # Did you use a dense neural model? (yes/no):
+      dense_neural_model: yes
+
+      # Did you use more than a single retrieval model? (yes/no):
+      single_stage_retrieval: no
