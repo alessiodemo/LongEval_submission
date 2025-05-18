@@ -42,11 +42,11 @@ method:
   automatic: true
 
   indexing:
-    Tokenizer: Whitespace
-    Filters: LowerCase, Length, Elision
-    Stoplist: Oracle French Stoplist
-    Stemmer: FrenchLight
-    Searcher parameters: synonyms with weight=0.5
+    tokenizer: Whitespace
+    filters: LowerCase, Length, Elision
+    stopwords: Oracle French Stoplist
+    stemmer: FrenchLight
+    searcher parameters: synonyms with weight=0.5
 
   retrieval:
     - # Which ranking approach do you use? E.g., bm25

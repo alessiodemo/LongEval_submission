@@ -42,11 +42,11 @@ method:
   automatic: true
 
   indexing:
-    Tokenizer: Whitespace
-    Filters: LowerCase, Length
-    Stoplist: Oracle French Stoplist
-    Stemmer: FrenchLight
-    Searcher parameters: Deep Learning reRanker (DL)
+    tokenizer: Whitespace
+    tilters: LowerCase, Length
+    stopwords: Oracle French Stoplist
+    stemmer: FrenchLight
+    searcher parameters: Deep Learning reRanker (DL)
 
   retrieval:
     - # Which ranking approach do you use? E.g., bm25
