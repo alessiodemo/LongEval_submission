@@ -42,11 +42,11 @@ method:
   automatic: true
 
   indexing:
-    Tokenizer: Whitespace
-    Filters: LowerCase, Length
-    Stoplist: Oracle French Stoplist
-    Stemmer: FrenchLight
-    Searcher parameters: Minimum query-document match threshold restored to 2 terms
+    tokenizer: Whitespace
+    filters: LowerCase, Length
+    stopwords: Oracle French Stoplist
+    stemmer: FrenchLight
+    searcher parameters: Minimum query-document match threshold restored to 2 terms
 
   retrieval:
     - # Which ranking approach do you use? E.g., bm25
@@ -57,10 +57,10 @@ method:
       ##################################################
 
       # Did you use any statistical ranking model? (yes/no)
-      lexical: ENTER_VALUE_HERE
+      lexical: no
 
       # Did you use any deep neural network model? (yes/no)
-      deep_neural_model: ENTER_VALUE_HERE
+      deep_neural_model: no
 
       # Did you use a sparse neural model? (yes/no):
       sparse_neural_model: no
@@ -69,4 +69,4 @@ method:
       dense_neural_model: no
 
       # Did you use more than a single retrieval model? (yes/no):
-      single_stage_retrieval: ENTER_VALUE_HERE
+      single_stage_retrieval: no
